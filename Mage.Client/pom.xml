@@ -161,6 +161,12 @@
             <artifactId>prettytime</artifactId>
             <version>4.0.2.Final</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>RELEASE</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <!-- to get the reference to local repository with com\googlecode\jspf\jspf-core\0.9.1\ -->
