@@ -35,7 +35,7 @@ public class ConnectDialog extends MageDialog {
     private static final Logger logger = Logger.getLogger(ConnectDialog.class);
     private Connection connection;
     private ConnectTask task;
-    private final RegisterUserDialog registerUserDialog;
+    public final RegisterUserDialog registerUserDialog;
     private final ResetPasswordDialog resetPasswordDialog;
 
     private final ActionListener connectAction = evt -> btnConnectActionPerformed(evt);
@@ -52,10 +52,11 @@ public class ConnectDialog extends MageDialog {
         this.txtPassword.addActionListener(connectAction);
 
         registerUserDialog = new RegisterUserDialog(this);
-        MageFrame.getDesktop().add(registerUserDialog, JLayeredPane.MODAL_LAYER);
-
         resetPasswordDialog = new ResetPasswordDialog(this);
-        MageFrame.getDesktop().add(resetPasswordDialog, JLayeredPane.MODAL_LAYER);
+        if (MageFrame.getDesktop() != null) {
+            MageFrame.getDesktop().add(registerUserDialog, JLayeredPane.MODAL_LAYER);
+            MageFrame.getDesktop().add(resetPasswordDialog, JLayeredPane.MODAL_LAYER);
+        }
     }
 
     public void showDialog() {
@@ -737,7 +738,7 @@ public class ConnectDialog extends MageDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPasswordActionPerformed
 
-    private void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
+    public void btnRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegisterActionPerformed
         registerUserDialog.showDialog();
     }//GEN-LAST:event_btnRegisterActionPerformed
 
@@ -745,7 +746,7 @@ public class ConnectDialog extends MageDialog {
         resetPasswordDialog.showDialog();
     }//GEN-LAST:event_btnForgotPasswordActionPerformed
 
-    private void connectXmageDe(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFind1findPublicServerActionPerformed
+    public void connectXmageDe(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFind1findPublicServerActionPerformed
         String serverAddress = "xmage.de";
         this.txtServer.setText(serverAddress);
         this.txtPort.setText("17171");
@@ -764,7 +765,7 @@ public class ConnectDialog extends MageDialog {
 
     }//GEN-LAST:event_btnFind2findPublicServerActionPerformed
 
-    private void connectXmageus(java.awt.event.ActionEvent evt) {
+    public void connectXmageus(java.awt.event.ActionEvent evt) {
         String serverAddress = "us.xmage.today";
         this.txtServer.setText(serverAddress);
         this.txtPort.setText("17171");
@@ -853,12 +854,12 @@ public class ConnectDialog extends MageDialog {
     private javax.swing.JButton btnConnect;
     private javax.swing.JButton btnFindBeta;
     private javax.swing.JButton btnFindLocal;
-    private javax.swing.JButton btnFindMain;
+    public javax.swing.JButton btnFindMain;
     private javax.swing.JButton btnFindOther;
-    private javax.swing.JButton btnFindUs;
+    public javax.swing.JButton btnFindUs;
     private javax.swing.JButton btnFlagSearch;
     private javax.swing.JButton btnForgotPassword;
-    private javax.swing.JButton btnRegister;
+    public javax.swing.JButton btnRegister;
     private javax.swing.JButton btnWhatsNew;
     private mage.client.util.gui.countryBox.CountryComboBox cbFlag;
     private javax.swing.JCheckBox chkAutoConnect;
@@ -878,9 +879,9 @@ public class ConnectDialog extends MageDialog {
     private javax.swing.JPanel panelFlag;
     private javax.swing.JPanel panelServer;
     private javax.swing.JPasswordField txtPassword;
-    private javax.swing.JTextField txtPort;
-    private javax.swing.JTextField txtServer;
-    private javax.swing.JTextField txtUserName;
+    public javax.swing.JTextField txtPort;
+    public javax.swing.JTextField txtServer;
+    public javax.swing.JTextField txtUserName;
     // End of variables declaration//GEN-END:variables
 
 }
