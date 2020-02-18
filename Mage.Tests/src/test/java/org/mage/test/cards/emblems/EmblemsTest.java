@@ -1,9 +1,14 @@
 package org.mage.test.cards.emblems;
 
+import mage.abilities.AbilitiesImpl;
+import mage.abilities.Ability;
+import mage.abilities.keyword.HasteAbility;
 import mage.cards.Card;
 import mage.constants.PhaseStep;
 import mage.constants.Zone;
 import mage.counters.CounterType;
+import mage.game.permanent.token.RedGreenBeastToken;
+import mage.players.Player;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mage.test.serverside.base.CardTestPlayerBase;
@@ -156,5 +161,76 @@ public class EmblemsTest extends CardTestPlayerBase {
 
         assertHandCount(playerA, 0);
 
+    }
+
+     /**
+     * Chandra, Awakened Inferno: +2: Each opponent gets an emblem with
+     * "At the beginning of your upkeep, this emblem deals 1 damage to you."
+     *
+     * Tests "At opponent upkeep, assert life has dropped"
+     */
+    @Test
+    public void testChandraAwakenedInferno(){
+        addCard(Zone.BATTLEFIELD, playerA, "Chandra, Awakened Inferno");
+        activateAbility(1, PhaseStep.PRECOMBAT_MAIN, playerA, "+2: Each opponent gets an emblem");
+        setStopAt(2, PhaseStep.PRECOMBAT_MAIN);
+        execute();
+        assertLife(playerB, 19);  //check if the emblem ticked one damage on playerB
+        assertEmblemCount(playerB, 1); //unique affect, actually gives the emblem to the opponent
+    }
+
+    /**
+     * Dack Fayden: −6: You get an emblem with "Whenever you cast a spell that targets one or more permanents,
+     * gain control of those permanents."
+     *
+     * Tests "Lightning Bolt the opponent's creature, without killing it, and check if it is now under your control"
+     */
+    @Test
+    public void testDackFayden(){
+        addCard(Zone.BATTLEFIELD, playerA, "Dack Fayden");
+        addCard(Zone.BATTLEFIELD, playerA, "Mountain");
+        addCard(Zone.HAND, playerA, "Lightning Bolt", 2);
+        addCard(Zone.BATTLEFIELD, playerB, "Ancient Brontodon", 1);
+
+        addCounters(1, PhaseStep.UPKEEP, playerA, "Dack Fayden", CounterType.LOYALTY, 4);
+        activateAbility(1, PhaseStep.PRECOMBAT_MAIN, playerA, "-6: You get an emblem");
+
+        castSpell(1, PhaseStep.POSTCOMBAT_MAIN, playerA, "Lightning Bolt", "Ancient Brontodon");
+
+        setStopAt(2, PhaseStep.UPKEEP);
+        execute();
+
+        //checks if playerA has the emblem
+        assertEmblemCount(playerA, 1);
+        //checks if Ancient Brontodon is now on playerA's field
+        assertPermanentCount(playerA, "Ancient Brontodon", 1);
+        //checks if Ancient Brontodon is no longer on playerB's field
+        assertPermanentCount(playerB, "Ancient Brontodon", 0);
+    }
+
+    /**
+     * Domri, Chaos Bringer: −8: You get an emblem with "At the beginning of each end step,
+     * create a 4/4 red and green Beast creature token with trample."
+     *
+     * Tests "Check if token has been created"
+     */
+    @Test
+    public void testDomriChaosBringer(){
+        addCard(Zone.BATTLEFIELD, playerA, "Domri, Chaos Bringer");
+
+        addCounters(1, PhaseStep.UPKEEP, playerA, "Domri, Chaos Bringer", CounterType.LOYALTY, 4);
+        activateAbility(1, PhaseStep.PRECOMBAT_MAIN, playerA, "-8: You get an emblem");
+
+        setStopAt(2, PhaseStep.UPKEEP);
+        execute();
+
+        //checks if playerA has the emblem
+        assertEmblemCount(playerA, 1);
+        //checks if Beast Token is on the field
+        assertPermanentCount(playerA, "Beast", 1);
+        //check its power/toughness
+        assertPowerToughness(playerA, "Beast", 4,4);
+        //check its colors
+        assertColor(playerA, "Beast", "RG", true);
     }
 }
