@@ -26,6 +26,7 @@ import mage.player.ai.ComputerPlayer7;
 import mage.players.ManaPool;
 import mage.players.Player;
 import mage.util.CardUtil;
+import mage.util.KeywordHolder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.mage.test.player.PlayerAction;
@@ -34,6 +35,7 @@ import org.mage.test.serverside.base.CardTestAPI;
 import org.mage.test.serverside.base.MageTestPlayerBase;
 
 import java.io.FileNotFoundException;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -823,6 +825,48 @@ public abstract class CardTestPlayerAPIImpl extends MageTestPlayerBase implement
             Assert.assertFalse("Card shouldn't have such ability=" + ability.toString() + ", player=" + player.getName()
                     + ", cardName" + cardName, found.getAbilities(currentGame).containsRule(ability));
         }
+    }
+
+    /** Specific assert for creature keyword check, checks if the target creature has the keyword
+     * NOTE: This is a pure text comparison, the creature may not actually have the keyword
+     *       it may just be referring to the keyword
+     * @param player
+     * @param cardName
+     * @param keyword The keyword that is being tested for
+     * @throws AssertionError
+     */
+    public void assertKeywords(Player player, String cardName, String keyword){
+        KeywordHolder.ReadKeywords();
+        ArrayList<String> keywords_list = KeywordHolder.getKeywords_list();
+
+        //Counts how many of the permanent is found
+        int foundCount = 0;
+        Permanent found = null;
+        for (Permanent permanent : currentGame.getBattlefield().getAllActivePermanents(player.getId())) {
+            if (permanent.getName().equals(cardName)) {
+                found = permanent;
+                foundCount++;
+            }
+        }
+
+        List<String> rules_text = found.getRules();
+        ArrayList<String> rules_text_lowercase = new ArrayList<>();
+        keyword = keyword.toLowerCase();
+
+        for (String s : rules_text){
+            rules_text_lowercase.add(s.toLowerCase());
+        }
+
+        Assert.assertNotNull("There is no such permanent under player's control, player=" + player.getName()
+                + ", cardName=" + cardName, found);
+
+        Assert.assertEquals("There are too many (" + foundCount + ") of such permanents under player's control, player=" + player.getName()
+                + ", cardName=" + cardName, 1, foundCount);
+
+        Assert.assertTrue("(" + keyword + ") is not a keyword", keywords_list.contains(keyword));
+
+        Assert.assertTrue("Permanent does not contain the keyword = "+ keyword, rules_text_lowercase.contains(keyword));
+
     }
 
     /**
